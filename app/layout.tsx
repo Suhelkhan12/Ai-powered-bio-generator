@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 
 import "./globals.css";
@@ -19,7 +20,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn(GeistMono.variable, "font-geistMono min-h-screen")}>
+      <body
+        className={cn(
+          GeistMono.variable,
+          GeistSans.variable,
+          "font-geistMono min-h-screen"
+        )}
+      >
         <GridPattern
           width={60}
           height={60}
