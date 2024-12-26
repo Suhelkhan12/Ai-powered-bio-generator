@@ -5,7 +5,7 @@ type MainWrapperProps = {
 
 const MainWrapper = ({ childrenItems }: MainWrapperProps) => {
   return (
-    <main className="pt-36">
+    <main className="pt-28">
       <div className="container mx-auto">{childrenItems}</div>
     </main>
   );
