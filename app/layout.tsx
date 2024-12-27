@@ -6,6 +6,8 @@ import "./globals.css";
 import MainWrapper from "@/components/mainwrapper/main-wrapper";
 import { cn } from "@/lib/utils";
 import GridPattern from "@/components/ui/grid-pattern";
+import { Toaster } from "sonner";
+import Footer from "@/components/footer/footer";
 
 export const metadata: Metadata = {
   title: "AI-Powered Bio Generator for Any Role | Create Your Perfect Bio",
@@ -35,6 +37,8 @@ export default function RootLayout({
           className="-z-10 opacity-30"
         />
         <MainWrapper childrenItems={children} />
+        <Footer />
+        <Toaster />
       </body>
     </html>
   );

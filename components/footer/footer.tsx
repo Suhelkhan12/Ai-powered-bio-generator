@@ -3,7 +3,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="py-4 text-sm">
+    <footer className="pb-6 mt-12 text-sm container mx-auto text-center">
       <p>
         Made with ❤️ by{" "}
         <Link

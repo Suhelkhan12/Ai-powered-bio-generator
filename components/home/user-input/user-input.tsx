@@ -28,26 +28,31 @@ import { grokModels } from "@/lib/data";
 import { Slider } from "@/components/ui/slider";
 import { LuBadgeInfo } from "react-icons/lu";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { BioTones, BioTypes } from "@/lib/types";
+import { toast } from "sonner";
 
 // form schema using zod
 const formSchema = z.object({
   model: z.string().min(1, "Model is required."),
-  modelRandomness: z.number().min(0, "Randomness must be atleast 0."),
+  modelRandomness: z.coerce.number(
+    z.number().min(0, "Randomness must be atleast 0.")
+  ),
   userQuery: z
     .string()
     .min(50, "Your query should be atleast 50 characters long.")
     .max(500, "Your query should not exceed 500 character limit."),
-  type: z.enum(["personal", "brand"], {
+  type: z.enum([BioTypes.Brand, BioTypes.Personal], {
     errorMap: () => ({ message: "Type is required." }),
   }),
   tone: z.enum(
     [
-      "professional",
-      "casual",
-      "sarcastic",
-      "funny",
-      "passionate",
-      "thoughtfull",
+      BioTones.Casual,
+      BioTones.Funny,
+      BioTones.Passionate,
+      BioTones.Professional,
+      BioTones.Sarcastic,
+      BioTones.Thoughtful,
     ],
     {
       errorMap: () => ({ message: "Tone is required." }),
@@ -64,15 +69,21 @@ const UserInput = () => {
       model: "",
       modelRandomness: 1,
       userQuery: "",
-      type: "personal",
-      tone: "casual",
+      type: BioTypes.Personal,
+      tone: BioTones.Professional,
       emojies: false,
     },
   });
 
   // form submit action
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    const validatedFields = formSchema.safeParse(values);
+    if (!validatedFields.success) {
+      console.error("Validation Errors:", validatedFields.error.format());
+      toast.warning("Please check your input and try again.");
+      return;
+    }
+    console.log(validatedFields.data);
   }
 
   return (
@@ -86,18 +97,18 @@ const UserInput = () => {
               name="model"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Model</FormLabel>
+                  <FormLabel htmlFor="model">Model</FormLabel>
                   <Select onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue />
+                        <SelectValue placeholder="Select ai model" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {grokModels.map((model) => (
                         <SelectItem key={model.id} value={model.id}>
                           <div className="flex items-center gap-3">
-                            <model.icon />
+                            <model.icon className={model.color} />
                             <p className="flex items-center gap-2">
                               {model.name}
                               <span className="text-black/50">
@@ -109,7 +120,7 @@ const UserInput = () => {
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -120,7 +131,9 @@ const UserInput = () => {
                 <FormItem>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <FormLabel>Randomness</FormLabel>
+                      <FormLabel htmlFor="modelRandomness">
+                        Randomness
+                      </FormLabel>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
@@ -145,6 +158,7 @@ const UserInput = () => {
                     max={2}
                     step={0.1}
                   />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -156,7 +170,7 @@ const UserInput = () => {
               name="userQuery"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tell me about you</FormLabel>
+                  <FormLabel htmlFor="userQuery">Tell me about you</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Elaborate..."
@@ -164,26 +178,74 @@ const UserInput = () => {
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
+            <div className="grid md:grid-cols-2 gap-5">
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem className="flex-grow">
+                    <FormLabel htmlFor="type">Bio type</FormLabel>
+                    <Select onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="personal">Personal</SelectItem>
+                        <SelectItem value="brand">Brand</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="tone"
+                render={({ field }) => (
+                  <FormItem className="flex-grow">
+                    <FormLabel htmlFor="tone">Tone of bio</FormLabel>
+                    <Select onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a tone" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="professional">
+                          Professional
+                        </SelectItem>
+                        <SelectItem value="casual">Crofessional</SelectItem>
+                        <SelectItem value="sarcastic">Sarcastic</SelectItem>
+                        <SelectItem value="funny">Funny</SelectItem>
+                        <SelectItem value="passionate">Passionate</SelectItem>
+                        <SelectItem value="thoughtfull">Thoughtfull</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <FormField
               control={form.control}
-              name="type"
+              name="emojies"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Type</FormLabel>
-                  <Select onValueChange={field.onChange}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="personal">Personal</SelectItem>
-                      <SelectItem value="brand">Brand</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <FormItem className="flex items-center space-x-2">
+                  <FormLabel htmlFor="emojies">Include emojies</FormLabel>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
