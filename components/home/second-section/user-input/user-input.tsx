@@ -1,7 +1,9 @@
 "use client";
 import * as z from "zod";
+import { useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { formSchema } from "@/lib/schema";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -30,40 +32,16 @@ import { LuBadgeInfo } from "react-icons/lu";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { BioTones, BioTypes } from "@/lib/types";
+import { generateBios } from "@/actions/generate-bios";
 import { toast } from "sonner";
 
-// form schema using zod
-const formSchema = z.object({
-  model: z.string().min(1, "Model is required."),
-  modelRandomness: z.coerce.number(
-    z.number().min(0, "Randomness must be atleast 0.")
-  ),
-  userQuery: z
-    .string()
-    .min(50, "Your query should be atleast 50 characters long.")
-    .max(500, "Your query should not exceed 500 character limit."),
-  type: z.enum([BioTypes.Brand, BioTypes.Personal], {
-    errorMap: () => ({ message: "Type is required." }),
-  }),
-  tone: z.enum(
-    [
-      BioTones.Casual,
-      BioTones.Funny,
-      BioTones.Passionate,
-      BioTones.Professional,
-      BioTones.Sarcastic,
-      BioTones.Thoughtful,
-    ],
-    {
-      errorMap: () => ({ message: "Tone is required." }),
-    }
-  ),
-  emojies: z.boolean(),
-});
-
-const UserInput = () => {
+type UserInputProps = {
+  setIsPending: React.Dispatch<React.SetStateAction<boolean>>;
+};
+const UserInput = ({ setIsPending }: UserInputProps) => {
+  const [isPending, startTransition] = useTransition();
   // creating form using react-hook-form
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<z.z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       model: "",
@@ -77,13 +55,12 @@ const UserInput = () => {
 
   // form submit action
   function onSubmit(values: z.infer<typeof formSchema>) {
-    const validatedFields = formSchema.safeParse(values);
-    if (!validatedFields.success) {
-      console.error("Validation Errors:", validatedFields.error.format());
-      toast.warning("Please check your input and try again.");
-      return;
-    }
-    console.log(validatedFields.data);
+    setIsPending(true);
+    startTransition(async () => {
+      const data = await generateBios(values);
+      toast.success(data.message);
+      setIsPending(false);
+    });
   }
 
   return (
@@ -98,7 +75,7 @@ const UserInput = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel htmlFor="model">Model</FormLabel>
-                  <Select onValueChange={field.onChange}>
+                  <Select onValueChange={field.onChange} disabled={isPending}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select ai model" />
@@ -157,6 +134,7 @@ const UserInput = () => {
                     defaultValue={[field.value]}
                     max={2}
                     step={0.1}
+                    disabled={isPending}
                   />
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -176,6 +154,7 @@ const UserInput = () => {
                       placeholder="Elaborate..."
                       className="resize-none min-h-40"
                       {...field}
+                      disabled={isPending}
                     />
                   </FormControl>
                   <FormMessage className="text-xs" />
@@ -189,7 +168,7 @@ const UserInput = () => {
                 render={({ field }) => (
                   <FormItem className="flex-grow">
                     <FormLabel htmlFor="type">Bio type</FormLabel>
-                    <Select onValueChange={field.onChange}>
+                    <Select onValueChange={field.onChange} disabled={isPending}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select a type" />
@@ -200,7 +179,6 @@ const UserInput = () => {
                         <SelectItem value="brand">Brand</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -210,7 +188,7 @@ const UserInput = () => {
                 render={({ field }) => (
                   <FormItem className="flex-grow">
                     <FormLabel htmlFor="tone">Tone of bio</FormLabel>
-                    <Select onValueChange={field.onChange}>
+                    <Select onValueChange={field.onChange} disabled={isPending}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select a tone" />
@@ -227,7 +205,6 @@ const UserInput = () => {
                         <SelectItem value="thoughtfull">Thoughtfull</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -237,19 +214,22 @@ const UserInput = () => {
               control={form.control}
               name="emojies"
               render={({ field }) => (
-                <FormItem className="flex items-center space-x-2">
+                <FormItem className="flex items-center gap-2">
                   <FormLabel htmlFor="emojies">Include emojies</FormLabel>
                   <FormControl>
                     <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
+                      className="!my-0"
+                      disabled={isPending}
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit">Generate bio 💬</Button>
+            <Button type="submit" disabled={isPending}>
+              Generate bio 💬
+            </Button>
           </fieldset>
         </form>
       </Form>
