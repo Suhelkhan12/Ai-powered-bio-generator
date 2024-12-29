@@ -34,6 +34,7 @@ import { Switch } from "@/components/ui/switch";
 import { BioTones, BioTypes } from "@/lib/types";
 import { generateBios } from "@/actions/generate-bios";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 type UserInputProps = {
   setIsPending: React.Dispatch<React.SetStateAction<boolean>>;
@@ -58,9 +59,10 @@ const UserInput = ({ setIsPending }: UserInputProps) => {
     setIsPending(true);
     startTransition(async () => {
       const data = await generateBios(values);
-      toast.success(data.message);
+      toast.success(JSON.stringify(data.bios));
       setIsPending(false);
     });
+    form.reset();
   }
 
   return (
@@ -84,9 +86,9 @@ const UserInput = ({ setIsPending }: UserInputProps) => {
                     <SelectContent>
                       {grokModels.map((model) => (
                         <SelectItem key={model.id} value={model.id}>
-                          <div className="flex items-center gap-3">
-                            <model.icon className={model.color} />
-                            <p className="flex items-center gap-2">
+                          <div className="flex items-center gap-2">
+                            <model.icon className={cn("size-4", model.color)} />
+                            <p className="flex items-center gap-2 ">
                               {model.name}
                               <span className="text-black/50">
                                 {model.grayText}
@@ -202,7 +204,7 @@ const UserInput = ({ setIsPending }: UserInputProps) => {
                         <SelectItem value="sarcastic">Sarcastic</SelectItem>
                         <SelectItem value="funny">Funny</SelectItem>
                         <SelectItem value="passionate">Passionate</SelectItem>
-                        <SelectItem value="thoughtfull">Thoughtfull</SelectItem>
+                        <SelectItem value="thoughtful">Thoughtfull</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormItem>
