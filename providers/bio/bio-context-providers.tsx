@@ -1,8 +1,13 @@
+"use client";
 import { BioContext } from "@/context/bio/bio-context";
-import { BioContextProps, Bios } from "@/lib/types";
+import { Bios } from "@/lib/types";
 import { FC, useState } from "react";
 
-const BioContextProvider: FC<BioContextProps> = ({ children }) => {
+type BioProviderProps = {
+  children: React.ReactNode;
+};
+
+const BioContextProvider: FC<BioProviderProps> = ({ children }) => {
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [bios, setBios] = useState<Bios[]>([]);
 

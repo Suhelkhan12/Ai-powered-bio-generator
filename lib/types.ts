@@ -18,7 +18,6 @@ export type Bios = {
 };
 
 export type BioContextProps = {
-  children?: React.ReactNode;
   isFetching: boolean;
   setIsFetching: React.Dispatch<React.SetStateAction<boolean>>;
   bios: Bios[];

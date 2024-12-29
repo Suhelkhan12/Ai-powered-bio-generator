@@ -33,11 +33,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { BioTones, BioTypes } from "@/lib/types";
 import { generateBios } from "@/actions/generate-bios";
-import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import useBioContext from "@/hooks/useBioContext";
+import { toast } from "sonner";
 
 const UserInput = () => {
   const [isPending, startTransition] = useTransition();
+  const { setIsFetching, setBios } = useBioContext();
   // creating form using react-hook-form
   const form = useForm<z.z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -53,9 +55,13 @@ const UserInput = () => {
 
   // form submit action
   function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsFetching(true);
     startTransition(async () => {
       const data = await generateBios(values);
-      toast.success(JSON.stringify(data.bios));
+      if (data.bios) {
+        setBios(data.bios);
+      } else toast.warning("Something went wrong while creating bios 💥");
+      setIsFetching(false);
     });
     form.reset();
   }

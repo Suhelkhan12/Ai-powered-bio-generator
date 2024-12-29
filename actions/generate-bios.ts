@@ -23,7 +23,7 @@ export const generateBios = async (
   try {
     const { object } = await generateObject({
       model: grok(model),
-      prompt: `Generate a Twitter bio for the user query: "${userQuery}". 
+      prompt: `Generate exactly 3 Twitter bio for the user query: "${userQuery}". 
 - Tone: ${tone}. 
 - Type: ${type}. 
 - Include images/emojis: ${emojies}.`,
