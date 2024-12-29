@@ -38,7 +38,7 @@ export const generateBios = async (
         ),
       }),
     });
-    return { message: "Bios generated.", bios: object.bio };
+    return { message: "Bios generated successfully 🎉", bios: object.bio };
   } catch (err) {
     console.log(err);
     return { message: "Something went wrong in generating response 💥" };

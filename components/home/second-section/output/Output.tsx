@@ -3,6 +3,7 @@ import React from "react";
 import OutputLoader from "./output-loader";
 import { Badge } from "@/components/ui/badge";
 import useBioContext from "@/hooks/useBioContext";
+import BioCard from "./bio-card";
 
 const Output = () => {
   const { isFetching, bios } = useBioContext();
@@ -18,7 +19,11 @@ const Output = () => {
       <div className="w-full h-full flex justify-between items-center">
         {isFetching && <OutputLoader />}
         {!isFetching && bios.length > 0 && (
-          <p className="text-center text-sm w-full">Generated bios</p>
+          <div className="flex flex-col w-full gap-6">
+            {bios.map((bio) => (
+              <BioCard key={bio.id} bio={bio.text} />
+            ))}
+          </div>
         )}
         {!isFetching && bios.length == 0 && (
           <div className="flex items-center flex-col justify-center w-full">

@@ -60,6 +60,7 @@ const UserInput = () => {
       const data = await generateBios(values);
       if (data.bios) {
         setBios(data.bios);
+        toast.success(data.message);
       } else toast.warning("Something went wrong while creating bios 💥");
       setIsFetching(false);
     });
@@ -201,7 +202,7 @@ const UserInput = () => {
                         <SelectItem value="professional">
                           Professional
                         </SelectItem>
-                        <SelectItem value="casual">Crofessional</SelectItem>
+                        <SelectItem value="casual">Casual</SelectItem>
                         <SelectItem value="sarcastic">Sarcastic</SelectItem>
                         <SelectItem value="funny">Funny</SelectItem>
                         <SelectItem value="passionate">Passionate</SelectItem>
