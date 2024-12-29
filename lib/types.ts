@@ -11,3 +11,16 @@ export enum BioTones {
   Passionate = "passionate",
   Thoughtful = "thoughtful",
 }
+
+export type Bios = {
+  id: string;
+  text: string;
+};
+
+export type BioContextProps = {
+  children?: React.ReactNode;
+  isFetching: boolean;
+  setIsFetching: React.Dispatch<React.SetStateAction<boolean>>;
+  bios: Bios[];
+  setBios: React.Dispatch<React.SetStateAction<Bios[]>>;
+};

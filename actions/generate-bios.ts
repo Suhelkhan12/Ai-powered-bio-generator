@@ -4,11 +4,7 @@ import { grok } from "@/lib/grok";
 import { generateObject } from "ai";
 import { formSchema } from "@/lib/schema";
 import * as z from "zod";
-
-type Bios = {
-  id: string;
-  text: string;
-};
+import { Bios } from "@/lib/types";
 
 /**
  * Generates Twitter bios based on user inputs.

@@ -36,10 +36,7 @@ import { generateBios } from "@/actions/generate-bios";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-type UserInputProps = {
-  setIsPending: React.Dispatch<React.SetStateAction<boolean>>;
-};
-const UserInput = ({ setIsPending }: UserInputProps) => {
+const UserInput = () => {
   const [isPending, startTransition] = useTransition();
   // creating form using react-hook-form
   const form = useForm<z.z.infer<typeof formSchema>>({
@@ -56,11 +53,9 @@ const UserInput = ({ setIsPending }: UserInputProps) => {
 
   // form submit action
   function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsPending(true);
     startTransition(async () => {
       const data = await generateBios(values);
       toast.success(JSON.stringify(data.bios));
-      setIsPending(false);
     });
     form.reset();
   }
