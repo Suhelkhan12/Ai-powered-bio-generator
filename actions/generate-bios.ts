@@ -23,10 +23,10 @@ export const generateBios = async (
   try {
     const { object } = await generateObject({
       model: grok(model),
-      prompt: `Generate exactly 3 Twitter bio for the user query: "${userQuery}". 
+      prompt: `Generate exactly 3 bio for the user query: "${userQuery}". 
 - Tone: ${tone}. 
 - Type: ${type}. 
-- Include images/emojis: ${emojies}.`,
+- Include images/emojis: ${emojies}. Remember user will be adding these to their respective accounts so generate according keeping every factor in mind.`,
       maxTokens: 1024,
       temperature: modelRandomness ?? 0.6,
       schema: z.object({
