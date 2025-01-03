@@ -41,6 +41,6 @@ export const generateBios = async (
     return { message: "Bios generated successfully 🎉", bios: object.bio };
   } catch (err) {
     console.log(err);
-    return { message: "Something went wrong in generating response 💥" };
+    return { message: "Apologies for the inconvenience. Groq is a paid service, and sometimes there may be temporary response issues.💥" };
   }
 };
